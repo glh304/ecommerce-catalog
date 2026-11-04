@@ -1,14 +1,22 @@
 <template>
   <div id="app" :class="pageCategoryClass">
-    <!-- Loading State -->
+    
     <div v-if="loading" class="card loading-card">
       <div class="loader"></div>
     </div>
 
-    <!-- Unavailable Product State -->
     <div v-else-if="isUnavailable" class="card unavailable-card">
       <div class="unavailable-bg-pattern">
-        <svg viewBox="0 0 24 24" width="260" height="260" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          viewBox="0 0 24 24"
+          width="260"
+          height="260"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <circle cx="12" cy="12" r="10"></circle>
           <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
           <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2"></line>
@@ -18,12 +26,14 @@
       <div class="unavailable-content">
         <p>This product is unavailable to show</p>
         <div class="button-group">
-          <button type="button" class="btn btn-next" @click="fetchNextProduct">Next product</button>
+          <button type="button" class="btn btn-next" @click="fetchNextProduct">
+            Next product
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Available Product State -->
+
     <div v-else class="card product-card">
       <div class="product-image">
         <img :src="product.image" :alt="product.title" />
@@ -40,7 +50,9 @@
                   v-for="star in 5"
                   :key="star"
                   class="circle"
-                  :class="{ filled: star <= Math.round(product.rating?.rate || 0) }"
+                  :class="{
+                    filled: star <= Math.round(product.rating?.rate || 0),
+                  }"
                 ></span>
               </div>
             </div>
@@ -56,8 +68,16 @@
           <div class="divider"></div>
           <div class="product-price">${{ product.price }}</div>
           <div class="button-group">
-            <button type="button" class="btn btn-buy" @click="handleBuy">Buy now</button>
-            <button type="button" class="btn btn-next" @click="fetchNextProduct">Next product</button>
+            <button type="button" class="btn btn-buy" @click="handleBuy">
+              Buy now
+            </button>
+            <button
+              type="button"
+              class="btn btn-next"
+              @click="fetchNextProduct"
+            >
+              Next product
+            </button>
           </div>
         </div>
       </div>
@@ -67,60 +87,66 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
       index: 1,
       product: {},
       loading: false,
-      isUnavailable: false
-    }
+      isUnavailable: false,
+    };
   },
   computed: {
     pageCategoryClass() {
-      if (this.isUnavailable) return 'page-unavailable'
-      if (this.product.category === "men's clothing") return 'page-men'
-      if (this.product.category === "women's clothing") return 'page-women'
-      return 'page-unavailable'
-    }
+      if (this.isUnavailable) return "page-unavailable";
+      if (this.product.category === "men's clothing") return "page-men";
+      if (this.product.category === "women's clothing") return "page-women";
+      return "page-unavailable";
+    },
   },
   mounted() {
-    this.fetchProduct()
+    this.fetchProduct();
   },
   methods: {
     async fetchProduct() {
-      this.loading = true
+      this.loading = true;
       try {
-        const res = await fetch(`https://fakestoreapi.com/products/${this.index}`)
-        const data = await res.json()
-        
-        if (data && (data.category === "men's clothing" || data.category === "women's clothing")) {
-          this.product = data
-          this.isUnavailable = false
+        const res = await fetch(
+          `https://fakestoreapi.com/products/${this.index}`,
+        );
+        const data = await res.json();
+
+        if (
+          data &&
+          (data.category === "men's clothing" ||
+            data.category === "women's clothing")
+        ) {
+          this.product = data;
+          this.isUnavailable = false;
         } else {
-          this.product = {}
-          this.isUnavailable = true
+          this.product = {};
+          this.isUnavailable = true;
         }
       } catch (err) {
-        this.product = {}
-        this.isUnavailable = true
+        this.product = {};
+        this.isUnavailable = true;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     fetchNextProduct() {
       if (this.index >= 20) {
-        this.index = 1
+        this.index = 1;
       } else {
-        this.index += 1
+        this.index += 1;
       }
-      this.fetchProduct()
+      this.fetchProduct();
     },
     handleBuy() {
-      alert(`Product "${this.product.title}" added to cart!`)
-    }
-  }
-}
+      alert(`Product "${this.product.title}" added to cart!`);
+    },
+  },
+};
 </script>
 
 <style>
@@ -140,7 +166,14 @@ export default {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 body {
@@ -160,7 +193,6 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* Page Themes */
 .page-men {
   background-color: var(--blue-bg);
 }
@@ -229,7 +261,6 @@ body {
   border-top-color: var(--dark-text);
 }
 
-/* Card Component */
 .card {
   background: var(--white);
   border-radius: 12px;
@@ -243,7 +274,7 @@ body {
   overflow: hidden;
 }
 
-/* Product Card Layout */
+
 .product-card {
   display: flex;
   gap: 50px;
@@ -296,7 +327,6 @@ body {
   font-weight: 500;
 }
 
-/* Rating Circles */
 .product-rating {
   display: flex;
   align-items: center;
@@ -321,7 +351,7 @@ body {
   background-color: transparent;
 }
 
-/* Dividers */
+
 .divider {
   height: 1px;
   background-color: var(--gray-border);
@@ -329,7 +359,7 @@ body {
   width: 100%;
 }
 
-/* Product Description */
+
 .product-description {
   font-size: 14px;
   color: var(--dark-text);
@@ -340,7 +370,7 @@ body {
   padding-right: 8px;
 }
 
-/* Custom Scrollbar */
+
 .product-description::-webkit-scrollbar {
   width: 5px;
 }
@@ -356,7 +386,6 @@ body {
   background: #999;
 }
 
-/* Price & Buttons */
 .product-price {
   font-size: 26px;
   font-weight: 700;
@@ -388,7 +417,6 @@ body {
   transform: translateY(0);
 }
 
-/* Unavailable View */
 .unavailable-card {
   position: relative;
   display: flex;
@@ -430,7 +458,6 @@ body {
   justify-content: center;
 }
 
-/* Loader */
 .loading-card {
   justify-content: center;
   align-items: center;
@@ -446,11 +473,14 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .card {
     padding: 24px;
